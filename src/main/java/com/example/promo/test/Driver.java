@@ -25,5 +25,7 @@ public class Driver {
         System.out.println(productList);
         Order order = orderService.generateOrder(productList);
         System.out.println(order);
+        double bill = orderService.calculateTotalBill(order);
+        System.out.println(bill);
     }
 }
