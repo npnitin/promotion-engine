@@ -42,4 +42,9 @@ public class OrderServiceImpl implements OrderService {
         order.setProducts(products);
         return order;
     }
+
+    @Override
+    public double calculateTotalBill(Order Order) {
+        return 0;
+    }
 }
