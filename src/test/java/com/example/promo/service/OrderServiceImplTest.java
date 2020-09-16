@@ -67,4 +67,53 @@ class OrderServiceImplTest {
         double totalBill = orderService.calculateTotalBill(order);
         assertEquals(totalBill,175D);
     }
+
+    @Test
+    void calculateBillScenarioATest() {
+        List<Product> products = new CopyOnWriteArrayList<>();
+        products.add(new Product("A",50D));
+        products.add(new Product("B",30D));
+        products.add(new Product("C",20D));
+        OrderService orderService = new OrderServiceImpl();
+        Order order = orderService.generateOrder(products);
+        double totalBill = orderService.calculateTotalBill(order);
+        assertEquals(totalBill,100D);
+    }
+    @Test
+    void calculateBillScenarioBTest() {
+        List<Product> products = new CopyOnWriteArrayList<>();
+        products.add(new Product("A",50D));
+        products.add(new Product("A",50D));
+        products.add(new Product("A",50D));
+        products.add(new Product("A",50D));
+        products.add(new Product("A",50D));
+        products.add(new Product("B",30D));
+        products.add(new Product("B",30D));
+        products.add(new Product("B",30D));
+        products.add(new Product("B",30D));
+        products.add(new Product("B",30D));
+        products.add(new Product("C",20D));
+        OrderService orderService = new OrderServiceImpl();
+        Order order = orderService.generateOrder(products);
+        double totalBill = orderService.calculateTotalBill(order);
+        assertEquals(totalBill,370D);
+    }
+    @Test
+    void calculateBillScenarioCTest() {
+        List<Product> products = new CopyOnWriteArrayList<>();
+        products.add(new Product("A",50D));
+        products.add(new Product("A",50D));
+        products.add(new Product("A",50D));
+        products.add(new Product("B",30D));
+        products.add(new Product("B",30D));
+        products.add(new Product("B",30D));
+        products.add(new Product("B",30D));
+        products.add(new Product("B",30D));
+        products.add(new Product("C",20D));
+        products.add(new Product("D",15D));
+        OrderService orderService = new OrderServiceImpl();
+        Order order = orderService.generateOrder(products);
+        double totalBill = orderService.calculateTotalBill(order);
+        assertEquals(totalBill,280D);
+    }
 }

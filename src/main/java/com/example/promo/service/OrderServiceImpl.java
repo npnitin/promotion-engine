@@ -3,18 +3,24 @@ package com.example.promo.service;
 
 import com.example.promo.bo.Order;
 import com.example.promo.bo.Product;
+import com.example.promo.bo.PromoType;
 import com.example.promo.bo.Promotion;
+import com.example.promo.utils.ComboStrategy;
+import com.example.promo.utils.IndividualItemStrategy;
+import com.example.promo.utils.PromotionStrategy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OrderServiceImpl implements OrderService {
     static Map<String,Double> productPriceMap = new ConcurrentHashMap<>();
     static List<Promotion> promotions = new ArrayList<>();
     static{
+        //products pricing and promotions data is hard coded and can be read from any sources
         productPriceMap.put("A",50D);
         productPriceMap.put("B",30D);
         productPriceMap.put("C",20D);
@@ -73,7 +79,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public double calculateTotalBill(Order Order) {
-        return 0;
+    public double calculateTotalBill(Order order) {
+        double discountedBill=0;
+        PromotionStrategy promotionStrategy;
+        for (Promotion promotion:promotions){
+            if(promotion.getPromoType().equalsIgnoreCase(PromoType.IND.getDesc())){
+                promotionStrategy = new IndividualItemStrategy();
+                promotionStrategy.processPromotionStrategy(order,promotion);
+            }else if(promotion.getPromoType().equalsIgnoreCase(PromoType.COMBO.getDesc())){
+                promotionStrategy = new ComboStrategy();
+                promotionStrategy.processPromotionStrategy(order,promotion);
+            }
+        }
+        discountedBill = order.getDiscountedBill();
+        //add remaining items which are not covered under any promotion
+        for (Product product:order.getProducts().keySet()){
+            discountedBill = discountedBill + (order.getProducts().get(product) * product.getPrice());
+        }
+        return discountedBill;
+    }
+
+    private List<Promotion> getPromotionsByType(List<Promotion> promotions, String type) {
+        List<Promotion> promotionsByType = new CopyOnWriteArrayList<>();
+        for (Promotion promotion:promotions){
+            if(promotion.getPromoType().equalsIgnoreCase(type)){
+                promotionsByType.add(promotion);
+            }
+        }
+        return promotionsByType;
     }
 }
